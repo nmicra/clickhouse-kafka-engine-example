@@ -1,0 +1,39 @@
+version: "3.7"
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+#docker run -d --rm --name clickhouseSrv -p 8123:8123 --ulimit nofile=262144:262144 yandex/clickhouse-server
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - "ALLOW_ANONYMOUS_LOGIN=yes"
+    networks:
+      - app-tier
+  clickhouseSrv:
+    image: 'yandex/clickhouse-server:latest'
+    ports:
+      - '8123:8123'
+    networks:
+      - app-tier
+  kafka1:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - "HOSTNAME_COMMAND=docker info | grep ^Name: | cut -d' ' -f 2"
+      - "KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT"
+      - "ALLOW_PLAINTEXT_LISTENER=yes"
+      - "KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      - "KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092"
+      - "KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092"
+      - "KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true"
+    depends_on:
+      - zookeeper
+    networks:
+      - app-tier
