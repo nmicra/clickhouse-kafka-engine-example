@@ -39,3 +39,4 @@ FROM mylogger_kafka;`
 `docker run -it --rm --network ch-kafka_app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-console-producer.sh --broker-list kafka1:9092 --topic KAFKA2CH`
 data:
 `{"payload":{"before":"null","after":{"id":"cf59290c-4627-4374-b2e4-93fff26c448b","area":"CA","event_time":"2022-01-01 00:00:00","type":"LOGIN_ERROR","user_id":"123","details_json":"{\"auth_method\":\"openid-connect\",\"grant_type\":\"password\",\"client_auth_method\":\"client-secret\",\"username\":\"kuku\"}"}}}`
+7. verify data saved to db: `select * from mylogger`
