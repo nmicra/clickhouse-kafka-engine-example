@@ -28,3 +28,12 @@ SELECT JSONExtractString(payload, 'payload', 'after', 'id')                     
        toDateTime64(JSONExtractString(payload, 'payload', 'after', 'event_time'), 3, 'Asia/Jerusalem') as event_time,
        JSONExtractString(payload, 'payload', 'after', 'details_json')                     as details_json
 FROM mylogger_kafka;`
+
+4. Create the topic KAFKA2CH
+`docker run -it --rm --network ch-kafka_app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-topics.sh --create --topic KAFKA2CH --replication-factor 1 --partitions 1 --bootstrap-server kafka1:9092`
+5. verify topic created
+`docker run -it --rm --network ch-kafka_app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-topics.sh --list --bootstrap-server kafka1:9092`
+6. open kafka-console-producer and push the data
+`docker run -it --rm --network ch-kafka_app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-console-producer.sh --broker-list kafka1:9092 --topic KAFKA2CH`
+data:
+`{"payload":{"before":"null","after":{"id":"cf59290c-4627-4374-b2e4-93fff26c448b","area":"CA","event_time":"2022-01-01 00:00:00","type":"LOGIN_ERROR","user_id":"123","details_json":"{\"auth_method\":\"openid-connect\",\"grant_type\":\"password\",\"client_auth_method\":\"client-secret\",\"username\":\"kuku\"}"}}}`
