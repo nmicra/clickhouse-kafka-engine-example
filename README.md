@@ -29,6 +29,8 @@ SELECT JSONExtractString(payload, 'payload', 'after', 'id')                     
        JSONExtractString(payload, 'payload', 'after', 'details_json')                     as details_json
 FROM mylogger_kafka;`
 
+
+### From command-line
 4. Create the topic KAFKA2CH
 `docker run -it --rm --network ch-kafka_app-tier -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 bitnami/kafka:latest kafka-topics.sh --create --topic KAFKA2CH --replication-factor 1 --partitions 1 --bootstrap-server kafka1:9092`
 5. verify topic created
